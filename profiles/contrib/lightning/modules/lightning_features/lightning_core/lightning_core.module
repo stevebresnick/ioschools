@@ -1,0 +1,44 @@
+<?php
+
+/**
+ * @file
+ * Contains core functionality for the Lightning distribution.
+ */
+
+use Drupal\node\NodeTypeInterface;
+use Drupal\user\Entity\Role;
+
+/**
+ * Implements hook_ENTITY_TYPE_insert().
+ */
+function lightning_core_node_type_insert(NodeTypeInterface $node_type) {
+  $config = \Drupal::config('lightning_core.settings')->get('content_roles');
+
+  $permission_map = function ($permission) use ($node_type) {
+    return str_replace('?', $node_type->id(), $permission);
+  };
+
+  foreach ($config as $key => $info) {
+    if ($info['enabled']) {
+      Role::create([
+        'id' => $node_type->id() . '_' . $key,
+        'label' => str_replace('?', $node_type->label(), $info['label']),
+        'permissions' => array_map($permission_map, $info['permissions']),
+      ])->save();
+    }
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_delete().
+ */
+function lightning_core_node_type_delete(NodeTypeInterface $node_type) {
+  $config = \Drupal::config('lightning_core.settings')->get('content_roles');
+
+  foreach (array_keys($config) as $key) {
+    $role = Role::load($node_type->id() . '_' . $key);
+    if ($role) {
+      $role->delete();
+    }
+  }
+}
