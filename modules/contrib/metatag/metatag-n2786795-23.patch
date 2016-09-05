@@ -1,0 +1,28 @@
+diff --git a/metatag.services.yml b/metatag.services.yml
+index b13dfc3..ebcf95b 100644
+--- a/metatag.services.yml
++++ b/metatag.services.yml
+@@ -15,13 +15,13 @@ services:
+     class: Drupal\metatag\MetatagManager
+     arguments: ['@plugin.manager.metatag.group', '@plugin.manager.metatag.tag', '@metatag.token', '@logger.factory']
+ 
+-# These will be reactivated once Console finishes refactoring the generators.
+-# @see https://www.drupal.org/node/2786795
+-#  metatag_generate_group:
+-#    class: Drupal\metatag\Command\GenerateGroupCommand
+-#    tags:
+-#      - { name: console.command }
+-#  metatag_generate_tag:
+-#    class: Drupal\metatag\Command\GenerateTagCommand
+-#    tags:
+-#      - { name: console.command }
++# DrupalConsole integration.
++# @see https://drupalconsole.com
++  metatag_generate_group:
++    class: Drupal\metatag\Command\GenerateGroupCommand
++    tags:
++      - { name: console.command }
++  metatag_generate_tag:
++    class: Drupal\metatag\Command\GenerateTagCommand
++    tags:
++      - { name: console.command }
